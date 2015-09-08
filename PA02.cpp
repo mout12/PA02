@@ -502,7 +502,7 @@ void showData( char idLetter, const SimpleVector<char> dispVector )
     int index = 0;
 
     cout << "Vector " << idLetter << ": ";
-    cout << "dispVector.getSize() " << dispVector.getSize() << endl;   
+    //cout << "dispVector.getSize() " << dispVector.getSize() << endl;   
 
     if( dispVector.getSize() > 0 )
        {

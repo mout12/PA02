@@ -24,8 +24,8 @@ SimpleVector<DataType>::SimpleVector()
     vectorCapacity = 10;
     vectorSize = 0;
     vectorData = new DataType[DEFAULT_CAPACITY];
-    cout << " Default constructor "  << endl;
-    cout << " The capacity isXXX: " << vectorCapacity << endl;
+    //cout << " Default constructor "  << endl;
+    //cout << " The capacity isXXX: " << vectorCapacity << endl;
 }
 
 /******************************************************************************
@@ -47,7 +47,7 @@ SimpleVector<DataType>::SimpleVector(int newCapacity)
     vectorCapacity = newCapacity;
     vectorData = new DataType[vectorCapacity];
     vectorSize = 0;
-    cout << " new capacity constructor " << endl;
+    //cout << " new capacity constructor " << endl;
 }
 
 /******************************************************************************
@@ -73,7 +73,7 @@ SimpleVector<DataType>::SimpleVector(int newCapacity, const DataType &fillValue)
         vectorData[i] = fillValue;
         //cout << "@vectorData[" << i << "] = " << vectorData[i] << endl;
     }
-    cout << " new capacity and fill with data constructyor " << endl;
+    //cout << " new capacity and fill with data constructyor " << endl;
 }
 
 ///// COPY CONSTRUCTOR
@@ -144,7 +144,17 @@ Exceptional/Error Conditions:
 template <class DataType>
 const SimpleVector<DataType>& SimpleVector<DataType>::operator=(const SimpleVector &rhVector)
 {
-    
+    int index = 0;
+
+    vectorCapacity = rhVector.vectorCapacity;
+    vectorSize = rhVector.vectorSize;
+    vectorData = new DataType[vectorCapacity];
+
+    for (index = 0; index < vectorSize; index++)
+    {
+        vectorData[index] = rhVector.vectorData[index];
+    }  
+
     return *this;
 }
 
@@ -202,7 +212,7 @@ Exceptional/Error Conditions:
 template <class DataType>
 DataType& SimpleVector<DataType>::operator[](int index) throw (logic_error)
 {
-    cout << " THE COOL INDEX IS: " << index << endl;
+    //cout << " THE COOL INDEX IS: " << index << endl;
 #if 1
     if (index < 0 || index > (vectorCapacity-1))
     {
@@ -231,8 +241,8 @@ Exceptional/Error Conditions:
 template <class DataType>
 const DataType& SimpleVector<DataType>::operator[](int index) const throw (logic_error)
 {
-    cout << " THE INDEX IS: " << index << endl;
-    cout << " CAPACITY IS : " << vectorCapacity << endl;
+    //cout << " THE INDEX IS: " << index << endl;
+    //cout << " CAPACITY IS : " << vectorCapacity << endl;
  #if 1
     if (index < 0 || index > (vectorCapacity-1))
     {
@@ -241,7 +251,7 @@ const DataType& SimpleVector<DataType>::operator[](int index) const throw (logic
     }
 #endif
 //    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
-    cout << " THE END" << endl;
+    //cout << " THE END" << endl;
     
     return vectorData[index];
 
@@ -308,7 +318,24 @@ Exceptional/Error Conditions:
 template <class DataType>
 void SimpleVector<DataType>::shrink(int shrinkBy) throw (logic_error)
 {
-    
+    DataType *shrunkenVector;
+    vectorCapacity -= shrinkBy;
+    int index = 0;    
+
+    if (vectorSize > vectorCapacity)
+    {
+        vectorSize = vectorCapacity;
+    }
+   
+    shrunkenVector = new DataType[vectorCapacity];
+
+    for (index = 0; index < vectorCapacity; index++)
+    {
+        shrunkenVector[index] = vectorData[index];   
+    }
+
+    delete[] vectorData;
+    vectorData = shrunkenVector;    
 }
 
 // increment/decrement don't affect class
@@ -328,7 +355,10 @@ Exceptional/Error Conditions:
 template <class DataType>
 void SimpleVector<DataType>::incrementSize()
 {
-
+    if (vectorSize < vectorCapacity)
+    {
+        vectorSize++;
+    }
 }
 
 /******************************************************************************
