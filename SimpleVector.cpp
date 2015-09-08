@@ -21,8 +21,11 @@ Exceptional/Error Conditions:
 template <class DataType>
 SimpleVector<DataType>::SimpleVector()
 {
-    vectorCapacity = 0;
+    vectorCapacity = 10;
     vectorSize = 0;
+    vectorData = new DataType[DEFAULT_CAPACITY];
+    cout << " Default constructor "  << endl;
+    cout << " The capacity isXXX: " << vectorCapacity << endl;
 }
 
 /******************************************************************************
@@ -44,6 +47,7 @@ SimpleVector<DataType>::SimpleVector(int newCapacity)
     vectorCapacity = newCapacity;
     vectorData = new DataType[vectorCapacity];
     vectorSize = 0;
+    cout << " new capacity constructor " << endl;
 }
 
 /******************************************************************************
@@ -69,11 +73,12 @@ SimpleVector<DataType>::SimpleVector(int newCapacity, const DataType &fillValue)
         vectorData[i] = fillValue;
         //cout << "@vectorData[" << i << "] = " << vectorData[i] << endl;
     }
+    cout << " new capacity and fill with data constructyor " << endl;
 }
 
 ///// COPY CONSTRUCTOR
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: SimpleVector COPY CONSTRUCTOR
 ===============================================================================
 Preconditions:
 -
@@ -87,7 +92,16 @@ Exceptional/Error Conditions:
 template <class DataType>
 SimpleVector<DataType>::SimpleVector(const SimpleVector &copiedVector)
 {
+    int index = 0;
 
+    vectorCapacity = copiedVector.vectorCapacity;
+    vectorSize = copiedVector.vectorSize;
+    vectorData = new DataType[vectorCapacity];
+
+    for (index = 0; index < vectorSize; index++)
+    {
+        vectorData[index] = copiedVector.vectorData[index];
+    }     
 }
 
 // destructor
@@ -169,7 +183,6 @@ Exceptional/Error Conditions:
 template <class DataType>
 int SimpleVector<DataType>::getSize() const
 {
-    cout << "in getSize() " << vectorSize << endl;
     return vectorSize;
 }
 
@@ -189,15 +202,17 @@ Exceptional/Error Conditions:
 template <class DataType>
 DataType& SimpleVector<DataType>::operator[](int index) throw (logic_error)
 {
-#if 0
-    if (index < 0 || index > (vectorSize-1))
+    cout << " THE COOL INDEX IS: " << index << endl;
+#if 1
+    if (index < 0 || index > (vectorCapacity-1))
     {
+
         //throw logic_error(vectorData[index]);
-        throw logic_error("ERROR DUDE");
+        throw logic_error("ERROR from not-const operator[] overload");
     }
 #endif
-    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
-
+//    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
+    
     return vectorData[index];
 }
 
@@ -216,13 +231,20 @@ Exceptional/Error Conditions:
 template <class DataType>
 const DataType& SimpleVector<DataType>::operator[](int index) const throw (logic_error)
 {
-    cout << "hello world CONST" << endl;
-    if (index < 0 || index >(vectorSize - 1))
+    cout << " THE INDEX IS: " << index << endl;
+    cout << " CAPACITY IS : " << vectorCapacity << endl;
+ #if 1
+    if (index < 0 || index > (vectorCapacity-1))
     {
-        throw logic_error("Error!! out of bounds");
+        //throw logic_error(vectorData[index]);
+        throw logic_error("ERROR from CONST operator[] overload");
     }
-
+#endif
+//    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
+    cout << " THE END" << endl;
+    
     return vectorData[index];
+
 }
 
 // modifiers
@@ -344,5 +366,5 @@ Exceptional/Error Conditions:
 template <class DataType>
 void SimpleVector<DataType>::copyVector(DataType *dest, DataType *src)
 {
-
+    
 }
