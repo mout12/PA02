@@ -4,76 +4,84 @@
 
 using namespace std;
 
-// constructors
+    // constructors
 
 /******************************************************************************
 Function Specifications: SimpleVector
 ===============================================================================
 Preconditions:
-- 
+- none ~ simnply creating new class instance with no arguments
 Postconditions:
-- 
+- new class instance is created with an array of default size;
 Algorithm:
-- 
+- none - just assign the values.
 Exceptional/Error Conditions:
-- 
+- none
 */
 template <class DataType>
 SimpleVector<DataType>::SimpleVector()
 {
-    vectorCapacity = 10;
+    vectorCapacity = DEFAULT_CAPACITY;
     vectorSize = 0;
     vectorData = new DataType[DEFAULT_CAPACITY];
-    //cout << " Default constructor "  << endl;
-    //cout << " The capacity isXXX: " << vectorCapacity << endl;
 }
 
 /******************************************************************************
 Function Specifications: SimpleVector
 ===============================================================================
 Preconditions:
--
+- needs a positive int to set the vector's capacity
 Postconditions:
--
+- a new, blank vector is created with a capacity set by int argument
 Algorithm:
--
+- assign values.
 Exceptional/Error Conditions:
--
+- negative int argument would cause problems.
 */
 template <class DataType>
 SimpleVector<DataType>::SimpleVector(int newCapacity)
 {
-    // make sure > 0;
+    if (newCapacity <= 0)
+    {
+        throw logic_error("Capacity must be > 0");
+    }
+
     vectorCapacity = newCapacity;
     vectorData = new DataType[vectorCapacity];
     vectorSize = 0;
-    //cout << " new capacity constructor " << endl;
 }
 
 /******************************************************************************
 Function Specifications: SimpleVector
 ===============================================================================
 Preconditions:
--
+- Expects positive int value for capacity and some kind of data to store
 Postconditions:
--
+- instance of class of int argument size, filling each element with data arg.
 Algorithm:
--
+- check for positive int argument
+- create new array of type DataType
+- loop through to capacity assigning fillValue to each array element.
 Exceptional/Error Conditions:
--
+- negative int argument (capacity)
 */
 template <class DataType>
 SimpleVector<DataType>::SimpleVector(int newCapacity, const DataType &fillValue)
 {
+    int index = 0;
+
+    if (newCapacity <= 0)
+    {
+        throw logic_error("capacity must be > 0");
+    }
+
     vectorCapacity = newCapacity;
     vectorSize = newCapacity;
     vectorData = new DataType[vectorCapacity];
-    for (int i = 0; i < vectorCapacity; i++)
+    for (index = 0; index < vectorCapacity; index++)
     {
-        vectorData[i] = fillValue;
-        //cout << "@vectorData[" << i << "] = " << vectorData[i] << endl;
+        vectorData[index] = fillValue;
     }
-    //cout << " new capacity and fill with data constructyor " << endl;
 }
 
 ///// COPY CONSTRUCTOR
@@ -322,7 +330,11 @@ void SimpleVector<DataType>::shrink(int shrinkBy) throw (logic_error)
     vectorCapacity -= shrinkBy;
     int index = 0;    
 
-    if (vectorSize > vectorCapacity)
+    if (shrinkBy > vectorCapacity)
+    {
+        throw logic_error("Cannot shrink into negatives");
+    }
+    else if (vectorSize > vectorCapacity)
     {
         vectorSize = vectorCapacity;
     }
@@ -376,7 +388,10 @@ Exceptional/Error Conditions:
 template <class DataType>
 void SimpleVector<DataType>::decrementSize()
 {
-
+    if (vectorSize < 0)
+    {
+        vectorSize--;
+    }
 }
 
 // Private
