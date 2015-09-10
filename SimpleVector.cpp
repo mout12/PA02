@@ -4,7 +4,7 @@
 
 using namespace std;
 
-    // constructors
+// constructors
 
 /******************************************************************************
 Function Specifications: SimpleVector
@@ -100,16 +100,18 @@ Exceptional/Error Conditions:
 template <class DataType>
 SimpleVector<DataType>::SimpleVector(const SimpleVector &copiedVector)
 {
-    int index = 0;
+#if 1
 
     vectorCapacity = copiedVector.vectorCapacity;
     vectorSize = copiedVector.vectorSize;
     vectorData = new DataType[vectorCapacity];
+    
+#endif
 
-    for (index = 0; index < vectorSize; index++)
-    {
-        vectorData[index] = copiedVector.vectorData[index];
-    }     
+    copyVector(vectorData, copiedVector.vectorData);
+
+
+
 }
 
 // destructor
@@ -151,18 +153,13 @@ Exceptional/Error Conditions:
 */
 template <class DataType>
 const SimpleVector<DataType>& SimpleVector<DataType>::operator=(const SimpleVector &rhVector)
-{
-    int index = 0;
-
+{    
     vectorCapacity = rhVector.vectorCapacity;
     vectorSize = rhVector.vectorSize;
     vectorData = new DataType[vectorCapacity];
 
-    for (index = 0; index < vectorSize; index++)
-    {
-        vectorData[index] = rhVector.vectorData[index];
-    }  
-
+    copyVector(vectorData, rhVector.vectorData);
+    
     return *this;
 }
 
@@ -222,15 +219,15 @@ DataType& SimpleVector<DataType>::operator[](int index) throw (logic_error)
 {
     //cout << " THE COOL INDEX IS: " << index << endl;
 #if 1
-    if (index < 0 || index > (vectorCapacity-1))
+    if (index < 0 || index >(vectorCapacity - 1))
     {
 
         //throw logic_error(vectorData[index]);
         throw logic_error("ERROR from not-const operator[] overload");
     }
 #endif
-//    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
-    
+    //    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
+
     return vectorData[index];
 }
 
@@ -251,16 +248,16 @@ const DataType& SimpleVector<DataType>::operator[](int index) const throw (logic
 {
     //cout << " THE INDEX IS: " << index << endl;
     //cout << " CAPACITY IS : " << vectorCapacity << endl;
- #if 1
-    if (index < 0 || index > (vectorCapacity-1))
+#if 1
+    if (index < 0 || index >(vectorCapacity - 1))
     {
         //throw logic_error(vectorData[index]);
         throw logic_error("ERROR from CONST operator[] overload");
     }
 #endif
-//    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
+    //    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
     //cout << " THE END" << endl;
-    
+
     return vectorData[index];
 
 }
@@ -268,42 +265,37 @@ const DataType& SimpleVector<DataType>::operator[](int index) const throw (logic
 // modifiers
 // allows vector to grow by given quantity
 /******************************************************************************
-Function Specifications: grow
+Function Specifications: growBy
 ===============================================================================
 Preconditions:
-- Receives positive int for number of elements to add to the vector's length
+- Receives positive int for number of elements to add to the vector's capacity
 Postconditions:
--
+- New vector with the same data
 Algorithm:
--
+- create new array of original+growBy size
+- have copyVector duplicate contents
+- delete old vector
+- have array pointer point to new array
 Exceptional/Error Conditions:
--
+- as per in-class instructions, we assume programmer will send a positive int
 */
 template <class DataType>
 void SimpleVector<DataType>::grow(int growBy)
 {
-    DataType * tempArray;
-    int index;
-    int newCapacity, newSize;
+    DataType * newArray;
+    int newCapacity, index;
 
-    if ((vectorSize + growBy) > vectorCapacity)
-    {
-        newCapacity = vectorSize + growBy;
-    }
-    
-    newSize = vectorSize + growBy;
+    newCapacity = vectorCapacity + growBy;
 
-    tempArray = new DataType[newCapacity];
-    
-    for (index = 0; index < vectorSize; index++) // Size not capacity only copy written datay
-    {
-        tempArray[index] = vectorData[index];
-    }
+    newArray = new DataType[newCapacity];
 
-    vectorSize += growBy;
+    copyVector(newArray, vectorData);
+
+    vectorCapacity = newCapacity;
 
     delete[] vectorData;
-    vectorData = tempArray;
+    
+    vectorData = newArray;
 }
 
 
@@ -327,8 +319,25 @@ template <class DataType>
 void SimpleVector<DataType>::shrink(int shrinkBy) throw (logic_error)
 {
     DataType *shrunkenVector;
+    
+    if (shrinkBy > vectorCapacity)
+    {
+        throw logic_error("Cannot shrink into negatives");
+    }
+    
     vectorCapacity -= shrinkBy;
-    int index = 0;    
+    shrunkenVector = new DataType[vectorCapacity];
+
+    if (vectorCapacity < vectorSize)
+    {
+        vectorSize = vectorCapacity;    
+    }
+    
+    copyVector(shrunkenVector, vectorData);
+
+
+#if 0
+    int index = 0;
 
     if (shrinkBy > vectorCapacity)
     {
@@ -338,78 +347,81 @@ void SimpleVector<DataType>::shrink(int shrinkBy) throw (logic_error)
     {
         vectorSize = vectorCapacity;
     }
-   
+
     shrunkenVector = new DataType[vectorCapacity];
 
     for (index = 0; index < vectorCapacity; index++)
     {
-        shrunkenVector[index] = vectorData[index];   
+        shrunkenVector[index] = vectorData[index];
     }
-
+#endif
     delete[] vectorData;
-    vectorData = shrunkenVector;    
+    
+    vectorData = shrunkenVector;
+
+    cout << "Hello from ShinkBy333" << endl;
+
 }
 
 // increment/decrement don't affect class
 //    but allow programmer to keep track of size inside vector
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: incrementSize
 ===============================================================================
 Preconditions:
--
+- int vectorSize has been initialized
 Postconditions:
--
+- vectorSize has been increased by 1
 Algorithm:
--
+- add 1
 Exceptional/Error Conditions:
--
+- none
 */
 template <class DataType>
 void SimpleVector<DataType>::incrementSize()
 {
-    if (vectorSize < vectorCapacity)
-    {
-        vectorSize++;
-    }
+    vectorSize++;   // As instructed in class, this member only does this.
 }
 
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: decrementSize
 ===============================================================================
 Preconditions:
--
+- int vectorSize has been initialized
 Postconditions:
--
+- vectorSize has been decreased by 1
 Algorithm:
--
+- subtract 1
 Exceptional/Error Conditions:
--
+- none
 */
 template <class DataType>
 void SimpleVector<DataType>::decrementSize()
 {
-    if (vectorSize < 0)
-    {
-        vectorSize--;
-    }
+    vectorSize--;   // As instructed in class, this member only does this.
 }
 
 // Private
 //void copyVector(DataType *dest, DataType *src);
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: copyVector
 ===============================================================================
 Preconditions:
--
+- receives two pointers to already-identically-sized arrays
 Postconditions:
--
+- both arrays contain identical data
 Algorithm:
--
+- copy array elements one by one until vectorSize has been reached.
 Exceptional/Error Conditions:
--
+- none
 */
 template <class DataType>
 void SimpleVector<DataType>::copyVector(DataType *dest, DataType *src)
 {
-    
+    int index = 0;
+
+    for (index = 0; index < vectorCapacity; index++)
+    {
+        dest[index] = src[index];
+    }
 }
