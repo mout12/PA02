@@ -318,49 +318,27 @@ Exceptional/Error Conditions:
 template <class DataType>
 void SimpleVector<DataType>::shrink(int shrinkBy) throw (logic_error)
 {
-    DataType *shrunkenVector;
-    
+    DataType *shrunkenVector; 
+
     if (shrinkBy > vectorCapacity)
     {
         throw logic_error("Cannot shrink into negatives");
     }
     
     vectorCapacity -= shrinkBy;
-    shrunkenVector = new DataType[vectorCapacity];
 
     if (vectorCapacity < vectorSize)
     {
         vectorSize = vectorCapacity;    
     }
+
+    shrunkenVector = new DataType[vectorCapacity];
     
     copyVector(shrunkenVector, vectorData);
 
-
-#if 0
-    int index = 0;
-
-    if (shrinkBy > vectorCapacity)
-    {
-        throw logic_error("Cannot shrink into negatives");
-    }
-    else if (vectorSize > vectorCapacity)
-    {
-        vectorSize = vectorCapacity;
-    }
-
-    shrunkenVector = new DataType[vectorCapacity];
-
-    for (index = 0; index < vectorCapacity; index++)
-    {
-        shrunkenVector[index] = vectorData[index];
-    }
-#endif
     delete[] vectorData;
     
     vectorData = shrunkenVector;
-
-    cout << "Hello from ShinkBy333" << endl;
-
 }
 
 // increment/decrement don't affect class
