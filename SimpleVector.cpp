@@ -1,10 +1,39 @@
+// Program Information ////////////////////////////////////////////////////////
+/*
+    File Name:    SimpleVector.cpp
+
+    Description:  Implementation of SimpleVector.h
+*/
+
+// Version/Revision Information ///////////////////////////////////////////////
+/*
+    1.00 (09/09/2015) - Jackson Buck
+        First complete version of my Simple Vector.
+        I believe testing is sufficient considering the assignment's specs.
+*/
+
+// Program description/support ////////////////////////////////////////////////
+/*
+    This is a simple vector which works in conjunction with driver file
+    PA02.cpp which was used to test the class and its functions.
+*/
+
+// Precompiler directives /////////////////////////////////////////////////////
+
+#ifndef SIMPLE_VECTOR_CLASS_CPP
+#define SIMPLE_VECTOR_CLASS_CPP
+
+// Header files ///////////////////////////////////////////////////////////////
+
 #include "SimpleVector.h"
 #include <stdexcept>
 #include <iostream>
 
 using namespace std;
 
-// constructors
+// Class function implementation //////////////////////////////////////////////
+
+    // constructors
 
 /******************************************************************************
 Function Specifications: SimpleVector
@@ -84,48 +113,43 @@ SimpleVector<DataType>::SimpleVector(int newCapacity, const DataType &fillValue)
     }
 }
 
-///// COPY CONSTRUCTOR
 /******************************************************************************
 Function Specifications: SimpleVector COPY CONSTRUCTOR
 ===============================================================================
 Preconditions:
--
+- receives a source SimpleVector class instance from which to copy
 Postconditions:
--
+- this destination SimpleVector instance is a clone of the source
 Algorithm:
--
+- copy size & capacity
+- create new array of same capacityh
+- have copyVector function perform a deep-copy of the array elements.
 Exceptional/Error Conditions:
--
+- none
 */
 template <class DataType>
 SimpleVector<DataType>::SimpleVector(const SimpleVector &copiedVector)
 {
-#if 1
-
     vectorCapacity = copiedVector.vectorCapacity;
     vectorSize = copiedVector.vectorSize;
     vectorData = new DataType[vectorCapacity];
     
-#endif
-
     copyVector(vectorData, copiedVector.vectorData);
-
-
-
 }
 
-// destructor
+    // destructor
+
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: ~SimpleVector
 ===============================================================================
 Preconditions:
--
+- none
 Postconditions:
--
+- array has been cleared
 Algorithm:
--
+- delete the array
 Exceptional/Error Conditions:
--
+- none
 */
 template <class DataType>
 SimpleVector<DataType>::~SimpleVector()
@@ -136,26 +160,28 @@ SimpleVector<DataType>::~SimpleVector()
     }
 }
 
+    // assignment
 
-// OPERATOR OVERLOADING
-// assignment
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: SimpleVector   OPERATOR= overloading
 ===============================================================================
 Preconditions:
--
+- Receives an instance of SimpleVector which has an existing array
 Postconditions:
--
+- This destination has is a clone of the source. Old data is gone.
 Algorithm:
--
+- Set size/capacity
+- delete old array
+- clone new array with copyVector()
 Exceptional/Error Conditions:
--
+- none
 */
 template <class DataType>
 const SimpleVector<DataType>& SimpleVector<DataType>::operator=(const SimpleVector &rhVector)
 {    
     vectorCapacity = rhVector.vectorCapacity;
     vectorSize = rhVector.vectorSize;
+    delete[] vectorData;    
     vectorData = new DataType[vectorCapacity];
 
     copyVector(vectorData, rhVector.vectorData);
@@ -163,18 +189,19 @@ const SimpleVector<DataType>& SimpleVector<DataType>::operator=(const SimpleVect
     return *this;
 }
 
-// accessors
+    // accessors
+
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: getCapacity
 ===============================================================================
 Preconditions:
--
+- none
 Postconditions:
--
+- just returns vectorCapacity
 Algorithm:
--
+- just return vectorCapacity
 Exceptional/Error Conditions:
--
+- none
 */
 template <class DataType>
 int SimpleVector<DataType>::getCapacity() const
@@ -184,16 +211,16 @@ int SimpleVector<DataType>::getCapacity() const
 }
 
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: getSize
 ===============================================================================
 Preconditions:
--
+- none
 Postconditions:
--
+- just returns vectorSize
 Algorithm:
--
+- just return vectorSize
 Exceptional/Error Conditions:
--
+- none
 */
 template <class DataType>
 int SimpleVector<DataType>::getSize() const
@@ -203,67 +230,55 @@ int SimpleVector<DataType>::getSize() const
 
 // index access
 /******************************************************************************
-Function Specifications: operator[]
+Function Specifications: operator[] overloading
 ===============================================================================
 Preconditions:
 - expects an int index for altering a particular point in the array
 Postconditions:
 - returns the altered data inserted into the point at the array.
 Algorithm:
--
+- check for valid index
+- return array element data at index
 Exceptional/Error Conditions:
--
+- out-of-bounds array index
 */
 template <class DataType>
 DataType& SimpleVector<DataType>::operator[](int index) throw (logic_error)
 {
-    //cout << " THE COOL INDEX IS: " << index << endl;
-#if 1
     if (index < 0 || index >(vectorCapacity - 1))
     {
-
-        //throw logic_error(vectorData[index]);
         throw logic_error("ERROR from not-const operator[] overload");
     }
-#endif
-    //    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
 
     return vectorData[index];
 }
 
 /******************************************************************************
-Function Specifications: SimpleVector
+Function Specifications: const operator[] overloading
 ===============================================================================
 Preconditions:
--
+- expects an int index for altering a particular point in the array
 Postconditions:
--
+- returns the altered data inserted into the point at the array.
 Algorithm:
--
+- check for valid index
+- return array element data at index
 Exceptional/Error Conditions:
--
+- out-of-bounds array index
 */
 template <class DataType>
 const DataType& SimpleVector<DataType>::operator[](int index) const throw (logic_error)
 {
-    //cout << " THE INDEX IS: " << index << endl;
-    //cout << " CAPACITY IS : " << vectorCapacity << endl;
-#if 1
     if (index < 0 || index >(vectorCapacity - 1))
     {
-        //throw logic_error(vectorData[index]);
         throw logic_error("ERROR from CONST operator[] overload");
     }
-#endif
-    //    cout << "operator[" << index << "] (not const) " << vectorData[index] << endl;
-    //cout << " THE END" << endl;
 
     return vectorData[index];
-
 }
 
-// modifiers
-// allows vector to grow by given quantity
+    // modifiers
+    // allows vector to grow by given quantity
 /******************************************************************************
 Function Specifications: growBy
 ===============================================================================
@@ -298,29 +313,33 @@ void SimpleVector<DataType>::grow(int growBy)
     vectorData = newArray;
 }
 
-
-// allows vector to shrink by given quantity
-// allows vector to be shrunk to zero,
-//   but throws logic_error if attempt to shrink to less than zero
-//void shrink(int shrinkBy) throw (logic_error);
+    // allows vector to shrink by given quantity
+    // allows vector to be shrunk to zero,
+    //   but throws logic_error if attempt to shrink to less than zero
+    //void shrink(int shrinkBy) throw (logic_error);
 /******************************************************************************
 Function Specifications: shrink
 ===============================================================================
 Preconditions:
--
+- receives int by which vector array should be shrunk
 Postconditions:
--
+- new shrunken array has replaced original array
 Algorithm:
--
+- check for valid shrink request
+- update vectorCapacity to reflect shortened array lengh
+- update size if it is larger than the capacity
+- create a new vector array of new, shortened length
+- copy the new vector array in copyVector
+- delete old array
 Exceptional/Error Conditions:
--
+- array must have at least 1 element.  error if shrink to < 1
 */
 template <class DataType>
 void SimpleVector<DataType>::shrink(int shrinkBy) throw (logic_error)
 {
     DataType *shrunkenVector; 
 
-    if (shrinkBy > vectorCapacity)
+    if (shrinkBy >= vectorCapacity)
     {
         throw logic_error("Cannot shrink into negatives");
     }
@@ -341,8 +360,8 @@ void SimpleVector<DataType>::shrink(int shrinkBy) throw (logic_error)
     vectorData = shrunkenVector;
 }
 
-// increment/decrement don't affect class
-//    but allow programmer to keep track of size inside vector
+    // increment/decrement don't affect class
+    //    but allow programmer to keep track of size inside vector
 /******************************************************************************
 Function Specifications: incrementSize
 ===============================================================================
@@ -379,8 +398,8 @@ void SimpleVector<DataType>::decrementSize()
     vectorSize--;   // As instructed in class, this member only does this.
 }
 
-// Private
-//void copyVector(DataType *dest, DataType *src);
+    // Private
+
 /******************************************************************************
 Function Specifications: copyVector
 ===============================================================================
@@ -403,3 +422,5 @@ void SimpleVector<DataType>::copyVector(DataType *dest, DataType *src)
         dest[index] = src[index];
     }
 }
+
+#endif
